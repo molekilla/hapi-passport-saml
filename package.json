@@ -1,0 +1,27 @@
+{
+  "name": "hapi-passport-saml",
+  "version": "0.1.0",
+  "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/molekilla/hapi-passport-saml.git"
+  },
+  "keywords": [
+    "saml",
+    "sso",
+    "hapi"
+  ],
+  "author": "Rogelio Morrell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/molekilla/hapi-passport-saml/issues"
+  },
+  "homepage": "https://github.com/molekilla/hapi-passport-saml#readme",
+  "dependencies": {
+    "passport-saml": "^0.12.0"
+  }
+}
