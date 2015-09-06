@@ -6,6 +6,9 @@
 `npm install hapi-passport-saml`
 
 ## Configuring Hapi server example
+
+Uses Feide.no as IdP, read passport-saml for how to use options
+
 ```
 var Hapi = require('hapi');
 var Boom = require('boom');
