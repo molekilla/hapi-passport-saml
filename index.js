@@ -1,7 +1,7 @@
 exports.register = function (server, options, next) {
 
     var saml = require('./lib/saml')
-        .create(options.templates, options.logger, options.config);
+        .create(options).saml;
 
     server.expose('instance', saml);
     next();
