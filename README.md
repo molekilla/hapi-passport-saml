@@ -9,7 +9,7 @@
 
 Uses Feide.no as IdP, read passport-saml for how to use options
 
-```
+```javascript
 var Hapi = require('hapi');
 var Boom = require('boom');
 var debug = require('debug')('api:main');
@@ -76,7 +76,7 @@ server.register(serverPlugins, function(err) {
 
 ### Hapi controller (routes) using hapi-passport-saml
 
-```
+```javascript
 var debug = require('debug')('saml:ctrl');
 
 
