@@ -74,7 +74,67 @@ server.register(serverPlugins, function(err) {
 
 ```
 
-### Hapi controller (routes) using hapi-passport-saml
+### Hapi routes
+```javascript
+var debug = require('debug')('saml');
+var samlCtrl = require('./v1');
+
+exports.register = function(plugin, options, next) {
+
+  plugin.route({
+    method: 'GET',
+    path: '/sso/v1/metadata.xml',
+    handler: samlCtrl.metadata,
+    config: {
+        description: 'metadata',
+        notes: 'metadata',
+        tags: ['api']
+    }
+  });
+    
+  plugin.route({
+    method: 'GET',
+    path: '/sso/v1/login',
+    handler: samlCtrl.login,
+    config: {
+        description: 'login',
+        notes: 'login',
+        tags: ['api']
+    }
+  });
+        
+  plugin.route({
+    method: 'POST',
+    path: '/sso/v1/assert',
+    handler: samlCtrl.assert,
+    config: {
+        description: 'assert',
+        notes: 'assert',
+        tags: ['api']
+    }
+  });
+    
+  plugin.route({
+    method: 'GET',
+    path: '/sso/v1/logout',
+    handler: samlCtrl.logout,
+    config: {
+        description: 'logout',
+        notes: 'logout',
+        tags: ['api']
+    }
+  });
+
+  next();
+};
+
+exports.register.attributes = {
+  pkg: require('./package.json')
+};
+
+```
+
+### Hapi controller
 
 ```javascript
 var debug = require('debug')('saml:ctrl');
