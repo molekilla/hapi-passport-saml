@@ -23,7 +23,6 @@
   "homepage": "https://github.com/molekilla/hapi-passport-saml#readme",
   "dependencies": {
     "debug": "^2.2.0",
-    "hapi": "^9.2.0",
     "passport-saml": "^0.15.0"
   }
 }
