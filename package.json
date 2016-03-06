@@ -24,5 +24,8 @@
   "dependencies": {
     "debug": "^2.2.0",
     "passport-saml": "^0.15.0"
+  },
+  "peerDepencies": {
+    "hapi": "^9.2.0"
   }
 }
