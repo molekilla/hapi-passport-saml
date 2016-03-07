@@ -26,6 +26,6 @@
     "passport-saml": "^0.15.0"
   },
   "peerDependencies": {
-    "hapi": "^9.2.0"
+    "hapi": ">=9.2.0"
   }
 }
