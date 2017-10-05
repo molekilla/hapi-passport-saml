@@ -1,6 +1,9 @@
 # hapi-passport-saml
  A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 
+## Current release
+0.2.0
+
 ## Install
 
 `npm install hapi-passport-saml`
