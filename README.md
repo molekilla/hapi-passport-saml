@@ -2,7 +2,7 @@
  A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 
 ## Current release
-0.2.0
+0.3.0
 
 ## Install
 
