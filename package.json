@@ -1,6 +1,6 @@
 {
   "name": "hapi-passport-saml",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP)",
   "main": "index.js",
   "scripts": {
@@ -23,9 +23,9 @@
   "homepage": "https://github.com/molekilla/hapi-passport-saml#readme",
   "dependencies": {
     "debug": "^2.2.0",
-    "passport-saml": "^0.30.0"
+    "passport-saml": "^0.33.0"
   },
   "peerDependencies": {
-    "hapi": ">= 9.2.0"
+    "hapi": ">= 14.0.0"
   }
 }
