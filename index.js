@@ -1,3 +1,4 @@
+const scheme = require('./lib/scheme');
 const samlCtrl = require('./lib');
 const saml = require('passport-saml/lib/passport-saml/saml');
 class HapiSaml {
@@ -7,20 +8,21 @@ class HapiSaml {
     }
 
     load(options) {
-        if (options.saml) {
+        if (!options.saml) {
             throw new Error('Missing options.saml');
         }
-        if (options.routes) {
-            throw new Error('Missing options.routes');
+        if (!options.metadata) {
+            throw new Error('Missing options.metadata');
         }
-        if (options.onAssertRequest) {
+        if (!options.onAssertRequest) {
             throw new Error('Missing options.onAssertRequest');
         }
-        if (options.onAssertResponse) {
+        if (!options.onAssertResponse) {
             throw new Error('Missing options.onAssertResponse');
         }
         this.saml = new saml.SAML(options.saml);
         this.props = { ...options.saml };
+        this.props.decryptionCert = options.decryptionCert;
     }
 
     getSamlLib() {
@@ -28,38 +30,25 @@ class HapiSaml {
     }
 }
 
-const register = function(plugin, options, next) {
+const register = function (server, options, next) {
     const hapiSaml = new HapiSaml();
-    hapiSaml.load(options.saml);
+    hapiSaml.load(options);
 
-    plugin.route({
+    server.auth.scheme('saml', scheme(hapiSaml));
+
+    server.route({
         method: 'GET',
-        path: options.routes.metadata.path,
+        path: options.metadata.path,
         handler: samlCtrl.getMetadata(hapiSaml),
-        config: options.routes.metadata.config,
+        config: options.metadata.config,
     });
 
-    plugin.route({
-        method: 'GET',
-        path: options.routes.login.path,
-        handler: samlCtrl.login(hapiSaml),
-        config: options.routes.login.config,
-    });
-
-    plugin.route({
+    server.route({
         method: 'POST',
         path: options.routes.assert.path,
         handler: samlCtrl.assert(hapiSaml, options.onAssertResponse, options.onAssertRequest),
         config: options.routes.assert.config,
     });
-
-    plugin.route({
-        method: 'GET',
-        path: options.routes.logout.path,
-        handler: samlCtrl.logout(hapiSaml),
-        config: options.routes.logout.config,
-    });
-
 
     next();
 }
