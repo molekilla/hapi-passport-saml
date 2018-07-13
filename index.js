@@ -7,12 +7,29 @@ const register = function (server, options, next) {
 
     server.auth.scheme('saml', SchemeImpl(hapiSaml, options));
     const hapiSamlOptions = options.hapiSaml;
+    const cookieName = `hapi-passport-saml-${options.hapiSaml.cookieName}`;
 
+    server.method('logoutSaml', (credentials, cb) => {
+        const request = { user: credentials.profile };
+        if (!request.user) {
+            // return reply('Missing request.user').code(400);
+            return cb(400);
+        }
+
+        hapiSaml.getSamlLib().getLogoutUrl(request, (err, url) => {
+            if (err !== null) {
+                // return reply.code(500);
+                return cb(500);
+            }
+            // return reply.redirect(url);
+            return cb(null, url);
+        });
+    });
     // SAML metadata
     server.route({
         method: 'GET',
         path: hapiSamlOptions.routes.initiateAuthentication.path,
-        handler: SamlController.login(hapiSaml.getSamlLib(), options.hapiSaml.cookieName),
+        handler: SamlController.login(hapiSaml.getSamlLib(), cookieName),
         config: hapiSamlOptions.routes.initiateAuthentication.config,
     });
 
@@ -31,7 +48,8 @@ const register = function (server, options, next) {
         handler: SamlController
             .assert(hapiSaml.getSamlLib(),
                 hapiSamlOptions.assertHooks.onResponse,
-                hapiSamlOptions.assertHooks.onRequest, , options.hapiSaml.cookieName),
+                hapiSamlOptions.assertHooks.onRequest,
+                cookieName),
         config: hapiSamlOptions.routes.assert.config,
     });
 
