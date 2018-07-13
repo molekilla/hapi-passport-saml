@@ -10,60 +10,79 @@
 
 ## Configuring Hapi server example
 
-Uses Feide.no as IdP, read passport-saml for how to use options
+Uses samlidp.io as IdP, read passport-saml for how to use options
 
 ```javascript
-var Hapi = require('hapi');
-var Boom = require('boom');
-var debug = require('debug')('api:main');
-var fs = require('fs');
-
-
-// Create a server with a host and port
-var server = module.exports = new Hapi.Server();
-server.connection({
+const idpCert = '...';
+const decryptionCert = '...';
+const samlOptions = {
+  saml: {
+    callbackUrl: 'http://localhost:8080/api/sso/v1/assert',
     host: 'localhost',
-    port: 8080
-});
-
-var decryptionCert = fs.readFileSync(__dirname + '/../../localhost-saml.crt').toString();
-
-// Dependencies
-server.app = {
-  decryptionCert: decryptionCert
-};
-
-
-var controllers = [
-    {
-        register: require('../controllers/saml')
-    }
-];
-
-var serverPlugins = [
-  {
-    register: require('hapi-passport-saml'),
-    options: {
-        callbackUrl: 'http://localhost/api/sso/v1/assert',
-        host: 'localhost',
-        protocol: 'http',
-        entryPoint: 'https://openidp.feide.no/simplesaml/saml2/idp/SSOService.php',
-        decryptionPvk: fs.readFileSync(__dirname + '/localhost-saml.pem').toString(),
-        cert: fs.readFileSync(__dirname + '/feide-idp.crt').toString(),
-        issuer: 'my-issuer-sp-saml'
+    protocol: 'http',
+    entryPoint: 'https://your-idp.samlidp.io/saml2/idp/SSOService.php',
+    decryptionPvk: fs.readFileSync(__dirname + '/private.key').toString(),
+    cert: idpCert,
+    issuer: 'my-saml'
+  },
+  hapiSaml: {
+    cookieName: 'session',
+    decryptionCert,
+    routes: {
+      metadata: {
+        path: '/api/sso/v1/metadata.xml',
+        config: {
+          description: 'metadata',
+          notes: 'metadata',
+          tags: ['api']
+        }
+      },
+      assert: {
+        path: '/api/sso/v1/assert',
+        config: {
+          description: 'assert',
+          notes: 'assert',
+          tags: ['api']
+        }
+      },
+      initiateAuthentication: {
+        path: '/api/sso/v1/login',
+        config: {
+          description: 'login',
+          notes: 'login',
+          tags: ['api']
+        }
+      },      
+    },
+    assertHooks: {
+      onResponse: (profile) => {
+        const username = profile['urn:oid:2.5.4.4'];
+        return { ...profile, username };
+      },
+      onRequest: () => {}
     }
   }
-];
+};
 
-server.register(serverPlugins, function(err) {
+const serverPlugins = [{
+  register: require('hapi-passport-saml'),
+  options: samlOptions,
+}];
 
-
-  server.register(controllers,
-   {
-     routes: {
-       prefix: '/api'
-     }
-   }, function() {
+const schemeOpts = {
+  password: '14523695874159852035.0',
+  isSecure: false,
+  isHttpOnly: false,
+  name: 'session',
+  ttl: 3600,
+}
+server.register(serverPlugins, function (err) {
+  server.auth.strategy('single-sign-on', 'saml', schemeOpts);
+  server.register(controllers, {
+    routes: {
+      prefix: '/api'
+    }
+  }, function () {
     if (!module.parent) {
       server.start(function () {
         console.log('Server started at port ' + server.info.port);
@@ -74,6 +93,10 @@ server.register(serverPlugins, function(err) {
 });
 ```
 
+## TODO
+
+- Document logout
+- Upload demo application
 
 ## References, Ideas and Based from
 * [Saml2](https://github.com/Clever/saml2)
