@@ -1,10 +1,12 @@
 {
   "name": "hapi-passport-saml",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP)",
-  "main": "index.js",
+  "main": "lib/index",
+  "types": "lib/index",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -23,9 +25,16 @@
   "homepage": "https://github.com/molekilla/hapi-passport-saml#readme",
   "dependencies": {
     "debug": "^2.2.0",
-    "passport-saml": "^0.30.0"
+    "passport-saml": "^0.33.0"
   },
   "peerDependencies": {
-    "hapi": ">= 9.2.0"
+    "hapi": ">= 14.0.0"
+  },
+  "devDependencies": {
+    "@types/hapi": "^15.0.0",
+    "@types/node": "^10.5.2",
+    "nodemon": "^1.18.2",
+    "ts-node": "^7.0.0",
+    "typescript": "^2.9.2"
   }
 }

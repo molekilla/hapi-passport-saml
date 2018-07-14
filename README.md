@@ -2,68 +2,80 @@
  A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 
 ## Current release
-0.3.0
+1.0.0
 
 ## Install
 
 `npm install hapi-passport-saml`
 
-## Configuring Hapi server example
+## Configuration
 
-Uses Feide.no as IdP, read passport-saml for how to use options
+Uses `samlidp.io` as IdP, read passport-saml for how to use options
 
 ```javascript
-var Hapi = require('hapi');
-var Boom = require('boom');
-var debug = require('debug')('api:main');
-var fs = require('fs');
-
-
-// Create a server with a host and port
-var server = module.exports = new Hapi.Server();
-server.connection({
+const idpCert = '...';
+const decryptionCert = '...';
+const samlOptions = {
+  // passport saml settings
+  saml: {
+    callbackUrl: 'http://localhost/api/sso/v1/assert',
+    logoutCallbackUrl: 'http://localhost/api/sso/v1/notifylogout',
+    logoutUrl: 'https://my-idp.samlidp.io/saml2/idp/SingleLogoutService.php',
     host: 'localhost',
-    port: 8080
-});
-
-var decryptionCert = fs.readFileSync(__dirname + '/../../localhost-saml.crt').toString();
-
-// Dependencies
-server.app = {
-  decryptionCert: decryptionCert
-};
-
-
-var controllers = [
-    {
-        register: require('../controllers/saml')
-    }
-];
-
-var serverPlugins = [
-  {
-    register: require('hapi-passport-saml'),
-    options: {
-        callbackUrl: 'http://localhost/api/sso/v1/assert',
-        host: 'localhost',
-        protocol: 'http',
-        entryPoint: 'https://openidp.feide.no/simplesaml/saml2/idp/SSOService.php',
-        decryptionPvk: fs.readFileSync(__dirname + '/localhost-saml.pem').toString(),
-        cert: fs.readFileSync(__dirname + '/feide-idp.crt').toString(),
-        issuer: 'my-issuer-sp-saml'
+    protocol: 'http',
+    entryPoint: 'https://my-idp.samlidp.io/saml2/idp/SSOService.php',
+    // Service Provider Private Key
+    decryptionPvk: fs.readFileSync(__dirname + '/private.key').toString(),
+    // IdP Public Key
+    cert: idpCert,
+    issuer: 'my-saml'
+  },
+  // hapi-passport-saml settings
+  config: {
+    // cookie name postfix
+    cookieName: 'session',
+    // Service Provider Public Key
+    decryptionCert,
+    // Plugin Routes
+    routes: {
+      // SAML Metadata
+      metadata: {
+        path: '/api/sso/v1/metadata.xml',
+      },
+      // SAML Assertion
+      assert: {
+        path: '/api/sso/v1/assert',
+      },
+    },
+    assertHooks: {
+      // Assertion Response Hook
+      // Use this to add any specific props for your business
+      onResponse: (profile) => {
+        const username = profile['urn:oid:2.5.4.4'];
+        return { ...profile, username };
+      },
     }
   }
-];
+};
 
-server.register(serverPlugins, function(err) {
+const serverPlugins = [{
+  register: require('hapi-passport-saml'),
+  options: samlOptions,
+}];
 
-
-  server.register(controllers,
-   {
-     routes: {
-       prefix: '/api'
-     }
-   }, function() {
+const schemeOpts = {
+  password: '14523695874159852035.0',
+  isSecure: false,
+  isHttpOnly: false,
+  ttl: 3600,
+}
+server.register(serverPlugins, function (err) {
+  server.auth.strategy('single-sign-on', 'saml', schemeOpts);
+  server.register(controllers, {
+    routes: {
+      prefix: '/api'
+    }
+  }, function () {
     if (!module.parent) {
       server.start(function () {
         console.log('Server started at port ' + server.info.port);
@@ -72,172 +84,11 @@ server.register(serverPlugins, function(err) {
   });
 
 });
-
-
-
 ```
 
-### Hapi routes
-```javascript
-var debug = require('debug')('saml');
-var samlCtrl = require('./v1');
+## Demo application
 
-exports.register = function(plugin, options, next) {
-
-  plugin.route({
-    method: 'GET',
-    path: '/sso/v1/metadata.xml',
-    handler: samlCtrl.metadata,
-    config: {
-        description: 'metadata',
-        notes: 'metadata',
-        tags: ['api']
-    }
-  });
-    
-  plugin.route({
-    method: 'GET',
-    path: '/sso/v1/login',
-    handler: samlCtrl.login,
-    config: {
-        description: 'login',
-        notes: 'login',
-        tags: ['api']
-    }
-  });
-        
-  plugin.route({
-    method: 'POST',
-    path: '/sso/v1/assert',
-    handler: samlCtrl.assert,
-    config: {
-        description: 'assert',
-        notes: 'assert',
-        tags: ['api']
-    }
-  });
-    
-  plugin.route({
-    method: 'GET',
-    path: '/sso/v1/logout',
-    handler: samlCtrl.logout,
-    config: {
-        description: 'logout',
-        notes: 'logout',
-        tags: ['api']
-    }
-  });
-
-  next();
-};
-
-exports.register.attributes = {
-  pkg: require('./package.json')
-};
-
-```
-
-### Hapi controller
-
-```javascript
-var debug = require('debug')('saml:ctrl');
-
-
-
-/**
- * Endpoint to retrieve metadata
- * @function
- * @param {Object} request - A Hapi Request
- * @param {Object} reply - A Hapi Reply
- */
-exports.metadata = function (request, reply) {
-    var saml = request.server.plugins['hapi-passport-saml'].instance;
-    return reply(saml.generateServiceProviderMetadata(request.server.app.decryptionCert))
-            .type('application/xml');
-};
-
-/**
- * Login
- * @function
- * @param {Object} request - A Hapi Request
- * @param {Object} reply - A Hapi Reply
- */
-exports.login = function (request, reply) {
-    var saml = request.server.plugins['hapi-passport-saml'].instance;
-    
-    saml.getAuthorizeUrl({
-        headers: request.headers,
-        body: request.payload,
-        query: request.query
-    }, function(err, loginUrl) {
-        if (err !== null)
-            return reply.code(500);
-        return reply.redirect(loginUrl);        
-    });
-};
-
-/**
- * Assert endpoint for when login completes
- * @function
- * @param {Object} request - A Hapi Request
- * @param {Object} reply - A Hapi Reply
- */
-exports.assert = function (request, reply) {
-    var saml = request.server.plugins['hapi-passport-saml'].instance;
-
-    var options = {
-        request_body: request.payload
-    };
-    
-    if (request.payload.SAMLRequest) {
-    // Implement your SAMLRequest handling here
-        debug(request.payload);
-        return reply(500);
-    }
-    if (request.payload.SAMLResponse) {
-        // Handles SP use cases, e.g. IdP is external and SP is Hapi
-        saml.validatePostResponse(request.payload, function(err, profile) {
-            debug(err);
-            debug(profile);
-            if (err !== null)
-                return reply.code(500);
-
-            // Save name_id and session_index for logout
-            // Note:  In practice these should be saved in the user session, not globally.
-            var name_id = profile.nameID;
-            var session_index = profile.sessionIndex;
-
-            request.server.app.name_id = name_id;
-            request.server.app.session_index = session_index;
-            return reply("Hello " + profile.nameID+"!");
-        });
-    }
-};
-
-
-
-/**
- * Logout
- * @function
- * @param {Object} request - A Hapi Request
- * @param {Object} reply - A Hapi Reply
- */
-exports.logout = function (request, reply) {
-    var options = {
-        name_id: request.server.app.name_id,
-        session_index: request.server.app.session_index
-    };
-
-    var saml = request.server.plugins['hapi-passport-saml'].instance;
-    
-    saml.getLogoutUrl(request, function(err, url) {
-        if (err !== null)
-            return reply.code(500);
-        return reply.redirect(url);        
-    });
-};
-
-```
+[Demo](https://github.com/molekilla/hapi-passport-saml-test)
 
 ## References, Ideas and Based from
 * [Saml2](https://github.com/Clever/saml2)
