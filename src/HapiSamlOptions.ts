@@ -1,15 +1,17 @@
 export interface HapiSamlOptionConfig {
+    decryptionCert: string;
     cookieName: string;
 
-    routes: any;
+    routes: {
+        metadata: any;
+        assert: any;
+    };
     assertHooks: {
-        onRequest: (i: string) => string;
+        onRequest: (i: string) => void;
         onResponse: (i: string) => string;
     };
 }
 export interface HapiSamlOptions {
-    routes: string;
-    decryptionCert: string;
     saml: any;
     config: HapiSamlOptionConfig;
 }

@@ -2,7 +2,7 @@ import { HapiSamlOptions } from './HapiSamlOptions';
 const saml = require('passport-saml/lib/passport-saml/saml');
 export class HapiSaml {
     private saml: any;
-    private props: any;
+    public props: any;
     constructor(options: HapiSamlOptions) {
         this.saml = null;
         this.props = {};
@@ -19,9 +19,6 @@ export class HapiSaml {
         if (!options.config.routes.metadata) {
             throw new Error('Missing options.config.routes.metadata');
         }
-        if (!options.config.routes.initiateAuthentication) {
-            throw new Error('Missing options.config.routes.initiateAuthentication');
-        }
         if (!options.config.routes.assert) {
             throw new Error('Missing options.config.routes.assert');
         }                        
@@ -33,7 +30,7 @@ export class HapiSaml {
         }
         this.saml = new saml.SAML(options.saml);
         this.props = { ...options.saml };
-        this.props.decryptionCert = options.decryptionCert;
+        this.props.decryptionCert = options.config.decryptionCert;
     }
 
     getSamlLib() {

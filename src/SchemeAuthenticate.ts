@@ -1,7 +1,8 @@
 import { SchemeConfig } from './SchemeConfig';
 import { HapiSaml } from './HapiSaml';
+import { Request, IStrictReply, Response } from 'hapi';
 export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig) => (
-  request: any,
+  request: Request,
   reply: any
 ) => {
   let session = request.state[settings.cookie];
@@ -23,7 +24,6 @@ export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig) => (
         session.redirectTo = request.path;
         return reply.redirect(loginUrl).state(settings.cookie, session);
       }
-
     );
     return;
   }

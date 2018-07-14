@@ -4,7 +4,7 @@
   "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP)",
   "main": "lib/index",
   "types": "lib/index",
- "scripts": {
+  "scripts": {
     "start": "npm run build:live",
     "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
   },
@@ -31,6 +31,7 @@
     "hapi": ">= 14.0.0"
   },
   "devDependencies": {
+    "@types/hapi": "^15.0.0",
     "@types/node": "^10.5.2",
     "nodemon": "^1.18.2",
     "ts-node": "^7.0.0",

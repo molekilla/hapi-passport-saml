@@ -1,3 +1,5 @@
+import { HapiSaml } from './HapiSaml';
+import { Request } from 'hapi';
 
 /**
  * Endpoint to retrieve metadata
@@ -5,9 +7,9 @@
  * @param {Object} request - A Hapi Request
  * @param {Object} reply - A Hapi Reply
  */
-exports.getMetadata = (saml: any) => (request: any, reply: any) => {
+exports.getMetadata = (saml: HapiSaml) => (request: Request, reply: any) => {
   return reply(
-    saml.generateServiceProviderMetadata(saml.props.decryptionCert)
+    saml.getSamlLib().generateServiceProviderMetadata(saml.props.decryptionCert)
   ).type('application/xml');
 };
 
@@ -22,7 +24,7 @@ exports.assert = (
   onAssertRes: Function,
   onAssertReq: Function,
   cookieName: string
-) => (request: any, reply: any) => {
+) => (request: Request, reply: any) => {
   let session = request.state[cookieName];
   if (request.payload.SAMLRequest) {
     // Implement your SAMLRequest handling here
@@ -52,25 +54,4 @@ exports.assert = (
       throw new Error('onAssert is missing');
     });
   }
-};
-
-/**
- * Logout
- * @function
- * @param {Object} request - A Hapi Request
- * @param {Object} reply - A Hapi Reply
- */
-exports.logout = saml => (request, reply) => {
-  const samlLib = saml;
-
-  if (!request.user) {
-    return reply('Missing request.user').code(400);
-  }
-
-  samlLib.getLogoutUrl(request, (err, url) => {
-    if (err !== null) {
-      return reply.code(500);
-    }
-    return reply.redirect(url);
-  });
 };
