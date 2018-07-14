@@ -10,38 +10,50 @@
 
 ## Configuration
 
-Uses samlidp.io as IdP, read passport-saml for how to use options
+Uses `samlidp.io` as IdP, read passport-saml for how to use options
 
 ```javascript
 const idpCert = '...';
 const decryptionCert = '...';
 const samlOptions = {
+  // passport saml settings
   saml: {
-    callbackUrl: 'http://localhost:8080/api/sso/v1/assert',
+    callbackUrl: 'http://localhost/api/sso/v1/assert',
+    logoutCallbackUrl: 'http://localhost/api/sso/v1/notifylogout',
+    logoutUrl: 'https://my-idp.samlidp.io/saml2/idp/SingleLogoutService.php',
     host: 'localhost',
     protocol: 'http',
-    entryPoint: 'https://your-idp.samlidp.io/saml2/idp/SSOService.php',
+    entryPoint: 'https://my-idp.samlidp.io/saml2/idp/SSOService.php',
+    // Service Provider Private Key
     decryptionPvk: fs.readFileSync(__dirname + '/private.key').toString(),
+    // IdP Public Key
     cert: idpCert,
     issuer: 'my-saml'
   },
+  // hapi-passport-saml settings
   config: {
+    // cookie name postfix
     cookieName: 'session',
+    // Service Provider Public Key
     decryptionCert,
+    // Plugin Routes
     routes: {
+      // SAML Metadata
       metadata: {
         path: '/api/sso/v1/metadata.xml',
       },
+      // SAML Assertion
       assert: {
         path: '/api/sso/v1/assert',
       },
     },
     assertHooks: {
+      // Assertion Response Hook
+      // Use this to add any specific props for your business
       onResponse: (profile) => {
         const username = profile['urn:oid:2.5.4.4'];
         return { ...profile, username };
       },
-      onRequest: () => {}
     }
   }
 };
@@ -74,10 +86,9 @@ server.register(serverPlugins, function (err) {
 });
 ```
 
-## TODO
+## Demo application
 
-- Document logout
-- Upload demo application
+TODO: Link
 
 ## References, Ideas and Based from
 * [Saml2](https://github.com/Clever/saml2)
