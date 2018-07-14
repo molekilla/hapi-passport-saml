@@ -88,7 +88,7 @@ server.register(serverPlugins, function (err) {
 
 ## Demo application
 
-TODO: Link
+[Demo](https://github.com/molekilla/hapi-passport-saml-test)
 
 ## References, Ideas and Based from
 * [Saml2](https://github.com/Clever/saml2)
