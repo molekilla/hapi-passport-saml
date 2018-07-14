@@ -1,13 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+import { HapiSamlOptions } from './HapiSamlOptions';
 const saml = require('passport-saml/lib/passport-saml/saml');
-class HapiSaml {
-    constructor(options) {
+export class HapiSaml {
+    private saml: any;
+    private props: any;
+    constructor(options: HapiSamlOptions) {
         this.saml = null;
         this.props = {};
         this.load(options);
     }
-    load(options) {
+
+    load(options: HapiSamlOptions) {
         if (!options.saml) {
             throw new Error('Missing options.saml');
         }
@@ -22,7 +24,7 @@ class HapiSaml {
         }
         if (!options.config.routes.assert) {
             throw new Error('Missing options.config.routes.assert');
-        }
+        }                        
         if (!options.config && !options.config.assertHooks.onRequest) {
             throw new Error('Missing options.config.assertHooks.onRequest');
         }
@@ -30,11 +32,11 @@ class HapiSaml {
             throw new Error('Missing options.config.assertHooks.onResponse');
         }
         this.saml = new saml.SAML(options.saml);
-        this.props = Object.assign({}, options.saml);
+        this.props = { ...options.saml };
         this.props.decryptionCert = options.decryptionCert;
     }
+
     getSamlLib() {
         return this.saml;
     }
 }
-exports.HapiSaml = HapiSaml;

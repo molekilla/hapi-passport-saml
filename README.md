@@ -8,7 +8,7 @@
 
 `npm install hapi-passport-saml`
 
-## Configuring Hapi server example
+## Configuration
 
 Uses samlidp.io as IdP, read passport-saml for how to use options
 
@@ -25,34 +25,16 @@ const samlOptions = {
     cert: idpCert,
     issuer: 'my-saml'
   },
-  hapiSaml: {
+  config: {
     cookieName: 'session',
     decryptionCert,
     routes: {
       metadata: {
         path: '/api/sso/v1/metadata.xml',
-        config: {
-          description: 'metadata',
-          notes: 'metadata',
-          tags: ['api']
-        }
       },
       assert: {
         path: '/api/sso/v1/assert',
-        config: {
-          description: 'assert',
-          notes: 'assert',
-          tags: ['api']
-        }
       },
-      initiateAuthentication: {
-        path: '/api/sso/v1/login',
-        config: {
-          description: 'login',
-          notes: 'login',
-          tags: ['api']
-        }
-      },      
     },
     assertHooks: {
       onResponse: (profile) => {
@@ -73,7 +55,6 @@ const schemeOpts = {
   password: '14523695874159852035.0',
   isSecure: false,
   isHttpOnly: false,
-  name: 'session',
   ttl: 3600,
 }
 server.register(serverPlugins, function (err) {
