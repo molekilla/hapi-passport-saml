@@ -2,7 +2,7 @@
  A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 
 ## Current release
-1.0.0
+[1.0.0](https://github.com/molekilla/hapi-passport-saml/issues/11)
 
 ## Install
 
