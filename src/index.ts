@@ -13,13 +13,14 @@ interface RegisterFun extends Function {
 const register = <RegisterFun>(
   function(server: Server, options: HapiSamlOptions, next: any) {
     const hapiSaml = new HapiSaml(options);
-    server.auth.scheme('saml', SchemeImpl(hapiSaml, options));
+    const samlCredsPropKey = options.config.cookieSamlCredentialPropKey || 'profile';
+    server.auth.scheme('saml', SchemeImpl(hapiSaml, options, samlCredsPropKey));
 
     const hapiSamlOptions = options.config;
-    if (!hapiSamlOptions.assertHooks.onRequest){
-        hapiSamlOptions.assertHooks.onRequest = (i: string) => {};
+    if (!hapiSamlOptions.assertHooks.onRequest) {
+      hapiSamlOptions.assertHooks.onRequest = (i: string) => {};
     }
-    const cookieName = `hapi-passport-saml-${options.config.cookieName}`;
+    let cookieName = options.config.cookieName || `hapi-passport-saml-cookie`;
 
     server.decorate('server', 'saml', () => {
       return {
@@ -39,7 +40,7 @@ const register = <RegisterFun>(
             });
         },
         getCookieName: () => {
-            return cookieName;
+          return cookieName;
         }
       };
     });
@@ -60,7 +61,8 @@ const register = <RegisterFun>(
         hapiSaml.getSamlLib(),
         hapiSamlOptions.assertHooks.onResponse,
         hapiSamlOptions.assertHooks.onRequest,
-        cookieName
+        cookieName,
+        samlCredsPropKey,
       )
       // config: hapiSamlOptions.routes.assert.config,
     });

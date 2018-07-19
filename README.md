@@ -32,7 +32,7 @@ const samlOptions = {
   },
   // hapi-passport-saml settings
   config: {
-    // cookie name postfix
+    // cookie name to use
     cookieName: 'session',
     // Service Provider Public Key
     decryptionCert,
@@ -68,6 +68,7 @@ const schemeOpts = {
   isSecure: false,
   isHttpOnly: false,
   ttl: 3600,
+  cookie: 'session',
 }
 server.register(serverPlugins, function (err) {
   server.auth.strategy('single-sign-on', 'saml', schemeOpts);
@@ -85,6 +86,13 @@ server.register(serverPlugins, function (err) {
 
 });
 ```
+
+### Cookies
+
+* Add both `config.cookieName` and `schemeOpts.cookie` to use existing cookie. Leave empty if you want to use default cookie `hapi-passport-saml`.
+* For scheme cookie options with cookie name, no other setting is used (plugin assumes application defined cookie options).
+* Default SAML credentials prop is `profile`, to override use `config.cookieSamlCredentialPropKey`
+
 
 ## Demo application
 

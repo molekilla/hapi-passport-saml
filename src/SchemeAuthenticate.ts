@@ -1,7 +1,7 @@
 import { SchemeConfig } from './SchemeConfig';
 import { HapiSaml } from './HapiSaml';
 import { Request, IStrictReply, Response } from 'hapi';
-export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig) => (
+export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig, samlCredsPropKey: string) => (
   request: Request,
   reply: any
 ) => {
@@ -28,9 +28,9 @@ export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig) => (
     return;
   }
 
-  if (session && session.profile) {
+  if (session && session[samlCredsPropKey]) {
     return reply.continue({
-      credentials: session.profile
+      credentials: session[samlCredsPropKey]
     });
   }
 

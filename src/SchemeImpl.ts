@@ -3,10 +3,11 @@ import { SchemeConfig } from './SchemeConfig';
 import { HapiSamlOptions } from './HapiSamlOptions';
 import { HapiSaml } from './HapiSaml';
 
-export const SchemeImpl = (saml: HapiSaml, options: HapiSamlOptions) => (
-  server: any,
-  settings?: SchemeConfig | any
-) => {
+export const SchemeImpl = (
+  saml: HapiSaml,
+  options: HapiSamlOptions,
+  propKey: string
+) => (server: any, settings?: SchemeConfig | any) => {
   if (!settings) {
     throw new Error('Missing scheme config');
   }
@@ -24,10 +25,13 @@ export const SchemeImpl = (saml: HapiSaml, options: HapiSamlOptions) => (
     clearInvalid: true
   };
   settings.cookie =
-    settings.cookie || 'hapi-passport-saml-' + options.config.cookieName;
-  server.state(settings.cookie, cookieOptions);
+    settings.cookie || 'hapi-passport-saml-cookie';
+
+  if (!settings.cookie) {
+    server.state(settings.cookie, cookieOptions);
+  }
 
   return {
-    authenticate: SchemeAuthenticate(saml, settings)
+    authenticate: SchemeAuthenticate(saml, settings, propKey)
   };
 };
