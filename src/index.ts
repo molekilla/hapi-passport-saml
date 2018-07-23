@@ -13,14 +13,15 @@ interface RegisterFun extends Function {
 const register = <RegisterFun>(
   function(server: Server, options: HapiSamlOptions, next: any) {
     const hapiSaml = new HapiSaml(options);
-    const samlCredsPropKey = options.config.cookieSamlCredentialPropKey || 'profile';
+    let cookieName = options.config.cookieName || `hapi-passport-saml-cookie`;
+    const samlCredsPropKey =
+      options.config.cookieSamlCredentialPropKey || 'profile';
     server.auth.scheme('saml', SchemeImpl(hapiSaml, options, samlCredsPropKey));
 
     const hapiSamlOptions = options.config;
     if (!hapiSamlOptions.assertHooks.onRequest) {
       hapiSamlOptions.assertHooks.onRequest = (i: string) => {};
     }
-    let cookieName = options.config.cookieName || `hapi-passport-saml-cookie`;
 
     server.decorate('server', 'saml', () => {
       return {
@@ -49,7 +50,10 @@ const register = <RegisterFun>(
     server.route({
       method: 'GET',
       path: hapiSamlOptions.routes.metadata.path,
-      handler: SamlController.getMetadata(hapiSaml)
+      config: {
+        auth: false,
+        handler: SamlController.getMetadata(hapiSaml)
+      }
       // config: hapiSamlOptions.routes.metadata.config,
     });
 
@@ -57,13 +61,16 @@ const register = <RegisterFun>(
     server.route({
       method: 'POST',
       path: hapiSamlOptions.routes.assert.path,
-      handler: SamlController.assert(
-        hapiSaml.getSamlLib(),
-        hapiSamlOptions.assertHooks.onResponse,
-        hapiSamlOptions.assertHooks.onRequest,
-        cookieName,
-        samlCredsPropKey,
-      )
+      config: {
+        auth: false,
+        handler: SamlController.assert(
+          hapiSaml.getSamlLib(),
+          hapiSamlOptions.assertHooks.onResponse,
+          hapiSamlOptions.assertHooks.onRequest,
+          cookieName,
+          samlCredsPropKey
+        )
+      }
       // config: hapiSamlOptions.routes.assert.config,
     });
 

@@ -1,12 +1,16 @@
 import { SchemeConfig } from './SchemeConfig';
 import { HapiSaml } from './HapiSaml';
 import { Request, IStrictReply, Response } from 'hapi';
-export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig, samlCredsPropKey: string) => (
-  request: Request,
-  reply: any
-) => {
-  let session = request.state[settings.cookie];
+export const SchemeAuthenticate = (
+  saml: HapiSaml,
+  settings: SchemeConfig,
+  samlCredsPropKey: string
+) => (request: Request, reply: any) => {
+  const state = request.state;
+  const cookieAuth = (request as any).cookieAuth;
+  let session = state['__'+settings.cookie];
 
+  console.log('current state', state);
   if (!session) {
     saml.getSamlLib().getAuthorizeUrl(
       {
@@ -19,10 +23,12 @@ export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig, samlC
         if (err !== null) {
           return reply().code(500);
         }
-
+        console.log('cookie', settings.cookie)
+        console.log('about to redirect...');
         session = {};
         session.redirectTo = request.path;
-        return reply.redirect(loginUrl).state(settings.cookie, session);
+
+        return reply.redirect(loginUrl).state('__'+settings.cookie, session);
       }
     );
     return;

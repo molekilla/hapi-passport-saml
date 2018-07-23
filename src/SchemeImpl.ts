@@ -19,16 +19,19 @@ export const SchemeImpl = (
     isSecure: settings.isSecure !== false, // Defaults to true
     isHttpOnly: settings.isHttpOnly !== false, // Defaults to true
     // isSameSite: 'Strict',
-    ttl: settings.ttl,
+    ttl: settings.ttl
     //domain: settings.domain,
-    ignoreErrors: true,
-    clearInvalid: true
+    //ignoreErrors: true,
+    //clearInvalid: true
   };
-  settings.cookie =
-    settings.cookie || 'hapi-passport-saml-cookie';
+  settings.cookie = options.config.cookieName || 'hapi-passport-saml-cookie';
 
-  if (!settings.cookie) {
-    server.state(settings.cookie, cookieOptions);
+  try {
+    //if (!settings.cookie) {
+      server.state('__'+settings.cookie, cookieOptions);
+    //}
+  } catch (e) {
+    throw e;
   }
 
   return {
