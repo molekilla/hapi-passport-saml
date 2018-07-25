@@ -4,6 +4,9 @@ import { HapiSaml } from './HapiSaml';
 import { SchemeImpl } from './SchemeImpl';
 import { Server } from 'hapi';
 
+const DEFAULT_COOKIE = `hapi-passport-saml-cookie`;
+const SAML_CREDENTIALS_PROP = 'profile';
+const SCHEME_NAME = 'saml';
 interface RegisterFun extends Function {
   (): any;
   attributes: {
@@ -13,17 +16,17 @@ interface RegisterFun extends Function {
 const register = <RegisterFun>(
   function(server: Server, options: HapiSamlOptions, next: any) {
     const hapiSaml = new HapiSaml(options);
-    let cookieName = options.config.cookieName || `hapi-passport-saml-cookie`;
+    let cookieName = DEFAULT_COOKIE;
     const samlCredsPropKey =
-      options.config.cookieSamlCredentialPropKey || 'profile';
-    server.auth.scheme('saml', SchemeImpl(hapiSaml, options, samlCredsPropKey));
+      options.config.cookieSamlCredentialPropKey || SAML_CREDENTIALS_PROP;
+    server.auth.scheme(SCHEME_NAME, SchemeImpl(hapiSaml, options, samlCredsPropKey, DEFAULT_COOKIE));
 
     const hapiSamlOptions = options.config;
     if (!hapiSamlOptions.assertHooks.onRequest) {
       hapiSamlOptions.assertHooks.onRequest = (i: string) => {};
     }
 
-    server.decorate('server', 'saml', () => {
+    server.decorate('server', SCHEME_NAME, () => {
       return {
         requestLogout: (credentials, cb) => {
           const request = { user: credentials };

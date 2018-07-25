@@ -1,8 +1,9 @@
 # hapi-passport-saml
- A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
+A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
+with support for multiple strategies
 
 ## Current release
-1.0.0
+1.1.0
 
 ## Install
 
@@ -32,8 +33,6 @@ const samlOptions = {
   },
   // hapi-passport-saml settings
   config: {
-    // cookie name to use
-    cookieName: 'session',
     // Service Provider Public Key
     decryptionCert,
     // Plugin Routes
@@ -50,6 +49,7 @@ const samlOptions = {
     assertHooks: {
       // Assertion Response Hook
       // Use this to add any specific props for your business
+      // or appending to existing cookie
       onResponse: (profile) => {
         const username = profile['urn:oid:2.5.4.4'];
         return { ...profile, username };
@@ -63,12 +63,12 @@ const serverPlugins = [{
   options: samlOptions,
 }];
 
+// Internal cookie settings
 const schemeOpts = {
   password: '14523695874159852035.0',
   isSecure: false,
   isHttpOnly: false,
   ttl: 3600,
-  cookie: 'session',
 }
 server.register(serverPlugins, function (err) {
   server.auth.strategy('single-sign-on', 'saml', schemeOpts);
@@ -87,12 +87,14 @@ server.register(serverPlugins, function (err) {
 });
 ```
 
-### Cookies
+>Note: Internal cookie name is `hapi-passport-saml-cookie`, if you need to read the SAML credentials for integration with other strategies, use assertion hook.
 
-* Add both `config.cookieName` and `schemeOpts.cookie` to use existing cookie. Leave empty if you want to use default cookie `hapi-passport-saml`.
-* For scheme cookie options with cookie name, no other setting is used (plugin assumes application defined cookie options).
-* Default SAML credentials prop is `profile`, to override use `config.cookieSamlCredentialPropKey`
+## Multiple strategies
 
+Use `hapi-passport-saml` as the last strategy. Tested with `try` and `required` modes.
+
+* `required`: If successful, returns credentials, else HTTP 200 with JSON
+* `try`: If successful, returns credentials, else empty credentials and isAuthenticated set to false
 
 ## Demo application
 

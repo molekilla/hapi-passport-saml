@@ -1,7 +1,7 @@
 export interface HapiSamlOptionConfig {
     decryptionCert: string;
     cookieSamlCredentialPropKey?: string | undefined | null;
-    cookieName?: string | undefined | null;
+    // cookieName?: string | undefined | null;
 
     routes: {
         metadata: any;
