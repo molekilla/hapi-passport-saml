@@ -7,7 +7,7 @@ export const SchemeImpl = (
   saml: HapiSaml,
   options: HapiSamlOptions,
   propKey: string,
-  cookieName: string,
+  cookieName: string
 ) => (server: any, settings?: SchemeConfig | any) => {
   if (!settings) {
     throw new Error('Missing scheme config');
@@ -28,9 +28,7 @@ export const SchemeImpl = (
   settings.cookie = cookieName;
 
   try {
-    //if (!settings.cookie) {
-      server.state(settings.cookie, cookieOptions);
-    //}
+    server.state(settings.cookie, cookieOptions);
   } catch (e) {
     throw e;
   }
