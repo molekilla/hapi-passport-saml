@@ -1,11 +1,14 @@
+const Boom = require('boom');
 import { SchemeConfig } from './SchemeConfig';
 import { HapiSaml } from './HapiSaml';
-import { Request, IStrictReply, Response } from 'hapi';
-export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig) => (
-  request: Request,
-  reply: any
-) => {
-  let session = request.state[settings.cookie];
+import { Request } from 'hapi';
+export const SchemeAuthenticate = (
+  saml: HapiSaml,
+  settings: SchemeConfig,
+  samlCredsPropKey: string
+) => (request: Request, reply: any) => {
+  const state = request.state;
+  let session = state[settings.cookie];
 
   if (!session) {
     saml.getSamlLib().getAuthorizeUrl(
@@ -19,20 +22,24 @@ export const SchemeAuthenticate = (saml: HapiSaml, settings: SchemeConfig) => (
         if (err !== null) {
           return reply().code(500);
         }
-
         session = {};
         session.redirectTo = request.path;
+
         return reply.redirect(loginUrl).state(settings.cookie, session);
       }
     );
     return;
   }
 
-  if (session && session.profile) {
+  if (session && session[samlCredsPropKey]) {
     return reply.continue({
-      credentials: session.profile
+      credentials: session[samlCredsPropKey]
     });
   }
+  if (request.auth.mode === 'try') {
+    return reply(null, Boom.unauthorized('Not authenticated'));
+  }
 
-  return reply().code(401);
+  const err = { error: 'Unauthorized' };
+  return reply(err, 'saml');
 };

@@ -23,15 +23,16 @@ exports.assert = (
   saml: any,
   onAssertRes: Function,
   onAssertReq: Function,
-  cookieName: string
+  cookieName: string,
+  samlCredsPropKey: string
 ) => (request: Request, reply: any) => {
   let session = request.state[cookieName];
+
   if (request.payload.SAMLRequest) {
     // Implement your SAMLRequest handling here
     if (onAssertReq) {
       return onAssertReq(request, reply);
     }
-    console.log(request.payload);
     return reply(500);
   }
   if (request.payload.SAMLResponse) {
@@ -45,9 +46,8 @@ exports.assert = (
       }
 
       if (onAssertRes) {
-        const updated = onAssertRes(profile);
-        console.log(JSON.stringify(updated));
-        session.profile = updated;
+        const updated = onAssertRes(profile,  request);
+        session[samlCredsPropKey] = updated;
         return reply.redirect(session.redirectTo).state(cookieName, session);
       }
 

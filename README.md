@@ -1,8 +1,9 @@
 # hapi-passport-saml
- A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
+A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
+with support for multiple strategies
 
 ## Current release
-[1.0.0](https://github.com/molekilla/hapi-passport-saml/issues/11)
+1.1.0
 
 ## Install
 
@@ -32,8 +33,6 @@ const samlOptions = {
   },
   // hapi-passport-saml settings
   config: {
-    // cookie name postfix
-    cookieName: 'session',
     // Service Provider Public Key
     decryptionCert,
     // Plugin Routes
@@ -50,6 +49,7 @@ const samlOptions = {
     assertHooks: {
       // Assertion Response Hook
       // Use this to add any specific props for your business
+      // or appending to existing cookie
       onResponse: (profile) => {
         const username = profile['urn:oid:2.5.4.4'];
         return { ...profile, username };
@@ -63,6 +63,7 @@ const serverPlugins = [{
   options: samlOptions,
 }];
 
+// Internal cookie settings
 const schemeOpts = {
   password: '14523695874159852035.0',
   isSecure: false,
@@ -85,6 +86,15 @@ server.register(serverPlugins, function (err) {
 
 });
 ```
+
+>Note: Internal cookie name is `hapi-passport-saml-cookie`, if you need to read the SAML credentials for integration with other strategies, use assertion hook.
+
+## Multiple strategies
+
+Use `hapi-passport-saml` as the last strategy. Tested with `try` and `required` modes.
+
+* `required`: If successful, returns credentials, else HTTP 200 with JSON
+* `try`: If successful, returns credentials, else empty credentials and isAuthenticated set to false
 
 ## Demo application
 
