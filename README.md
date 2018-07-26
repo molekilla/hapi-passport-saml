@@ -96,6 +96,9 @@ Use `hapi-passport-saml` as the last strategy. Tested with `try` and `required` 
 * `required`: If successful, returns credentials, else HTTP 200 with JSON
 * `try`: If successful, returns credentials, else empty credentials and isAuthenticated set to false
 
+More info: [Integrating hapi cookie with hapi passport saml v1.1.0
+](https://gist.github.com/molekilla/a7a899a3b3d7cbf2ae89998606102330)
+
 ## Demo application
 
 [Demo](https://github.com/molekilla/hapi-passport-saml-test)
