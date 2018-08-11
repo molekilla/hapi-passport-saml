@@ -26,8 +26,6 @@ exports.assert = (
   cookieName: string,
   samlCredsPropKey: string
 ) => (request: Request, reply: any) => {
-  let session = request.state[cookieName];
-
   if (request.payload.SAMLRequest) {
     // Implement your SAMLRequest handling here
     if (onAssertReq) {
@@ -46,6 +44,7 @@ exports.assert = (
       }
 
       if (onAssertRes) {
+        let session = request.state[cookieName];
         const updated = onAssertRes(profile,  request);
         session[samlCredsPropKey] = updated;
         return reply.redirect(session.redirectTo).state(cookieName, session);
