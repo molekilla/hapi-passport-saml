@@ -44,10 +44,8 @@ exports.assert = (
       }
 
       if (onAssertRes) {
-        let session = request.state[cookieName];
-        const updated = onAssertRes(profile,  request);
-        session[samlCredsPropKey] = updated;
-        return reply.redirect(session.redirectTo).state(cookieName, session);
+        // the callback shall return the reply object after using it to redirect/response.
+        return onAssertRes(profile, request, reply).state(cookieName, profile);      
       }
 
       throw new Error('onAssert is missing');
