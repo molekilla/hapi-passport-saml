@@ -45,7 +45,11 @@ exports.assert = (
 
       if (onAssertRes) {
         // the callback shall return the reply object after using it to redirect/response.
-        return onAssertRes(profile, request, reply).state(cookieName, profile);      
+        const replyFromCallback = onAssertRes(profile, request, reply).state(cookieName, profile);
+        if(replyFromCallback) {
+          return replyFromCallback.state(cookieName, profile);
+        }
+        return reply.state(cookieName, profile).code(200);
       }
 
       throw new Error('onAssert is missing');
