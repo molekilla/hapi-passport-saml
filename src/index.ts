@@ -14,7 +14,7 @@ interface RegisterFun extends Function {
   };
 }
 const register = <RegisterFun>(
-  function(server: Server, options: HapiSamlOptions, next: any) {
+  function(server: Server, options: HapiSamlOptions) {
     const hapiSaml = new HapiSaml(options);
     let cookieName = DEFAULT_COOKIE;
     const samlCredsPropKey =
@@ -76,13 +76,10 @@ const register = <RegisterFun>(
       }
       // config: hapiSamlOptions.routes.assert.config,
     });
-
-    next();
   }
 );
 
-register.attributes = {
+exports.plugin = {
+  register,
   pkg: require('../package.json')
-};
-
-exports.register = register;
+}

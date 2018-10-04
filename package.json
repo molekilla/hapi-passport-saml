@@ -8,6 +8,9 @@
     "start": "npm run build:live",
     "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
   },
+  "files": [
+    "lib"
+  ],
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/molekilla/hapi-passport-saml.git"
@@ -26,10 +29,10 @@
   "dependencies": {
     "boom": "^7.2.0",
     "debug": "^2.2.0",
-    "passport-saml": "^0.33.0"
+    "passport-saml": "^0.35.0"
   },
   "peerDependencies": {
-    "hapi": ">= 14.0.0"
+    "hapi": ">= 17.0.0"
   },
   "devDependencies": {
     "@types/hapi": "^15.0.0",

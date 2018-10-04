@@ -19,7 +19,7 @@ export const SchemeImpl = (
     password: settings.password,
     isSecure: settings.isSecure !== false, // Defaults to true
     isHttpOnly: settings.isHttpOnly !== false, // Defaults to true
-    // isSameSite: 'Strict',
+    isSameSite: settings.isSameSite || 'Strict',
     ttl: settings.ttl
     //domain: settings.domain,
     //ignoreErrors: true,
