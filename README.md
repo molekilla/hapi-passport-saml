@@ -2,8 +2,10 @@
 A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 with support for multiple strategies
 
+**Version 2.0.0 is compatible with Hapi 17. For previous version, stay with 1.x.x**
+
 ## Current release
-1.3.0
+2.0.0
 
 ## Install
 
@@ -50,9 +52,12 @@ const samlOptions = {
       // Assertion Response Hook
       // Use this to add any specific props for your business
       // or appending to existing cookie
-      onResponse: (profile) => {
-        const username = profile['urn:oid:2.5.4.4'];
-        return { ...profile, username };
+      // or make use of the RelayState
+      onResponse: (profile, request, h) => {
+        if(request.payload.RelayState)
+          return h.redirect(request.payload.RelayState);
+        else
+          return h.response();
       },
     }
   }
