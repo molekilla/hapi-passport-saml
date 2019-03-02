@@ -16,6 +16,13 @@ with support for multiple strategies
 Uses `samlidp.io` as IdP, read passport-saml for how to use options
 
 ```javascript
+const Hapi = require('hapi');
+const saml = require('hapi-passport-saml');
+const routes = require('./routes/');
+
+const server = Hapi.Server({
+  port,
+});
 const idpCert = '...';
 const decryptionCert = '...';
 const samlOptions = {
@@ -63,11 +70,6 @@ const samlOptions = {
   }
 };
 
-const serverPlugins = [{
-  register: require('hapi-passport-saml'),
-  options: samlOptions,
-}];
-
 // Internal cookie settings
 const schemeOpts = {
   password: '14523695874159852035.0',
@@ -75,21 +77,23 @@ const schemeOpts = {
   isHttpOnly: false,
   ttl: 3600,
 }
-server.register(serverPlugins, function (err) {
-  server.auth.strategy('single-sign-on', 'saml', schemeOpts);
-  server.register(controllers, {
-    routes: {
-      prefix: '/api'
-    }
-  }, function () {
-    if (!module.parent) {
-      server.start(function () {
-        console.log('Server started at port ' + server.info.port);
-      });
-    }
-  });
 
-});
+(async function start() {
+  try {
+    await server.register([
+      { plugin: saml, options: samlOptions },
+    ]);
+
+    await server.auth.strategy('single-sign-on', 'saml', schemeOpts);
+    await server.auth.default('single-sign-on');
+    await server.route(routes);
+    await server.start();
+    console.log(`Server listening on ${port}`);
+  } catch (e) {
+    server.stop();
+    console.error('Server stopped due to an error', e);
+  }
+}());
 ```
 
 >Note: Internal cookie name is `hapi-passport-saml-cookie`, if you need to read the SAML credentials for integration with other strategies, use assertion hook.
