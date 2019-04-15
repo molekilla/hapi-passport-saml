@@ -2,10 +2,10 @@
 A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 with support for multiple strategies
 
-**Version 2.0.0 is compatible with Hapi 17. For previous version, stay with 1.x.x**
+**Version 2.0.1 is compatible with Hapi 17. For previous version, stay with 1.x.x**
 
 ## Current release
-2.0.0
+2.0.1
 
 ## Install
 
