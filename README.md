@@ -85,20 +85,6 @@ const schemeOpts = {
   isHttpOnly: false,
   ttl: 3600,
 };
-server.register(serverPlugins, function (err) {
-  server.auth.strategy('single-sign-on', 'saml', schemeOpts);
-  server.register(controllers, {
-    routes: {
-      prefix: '/api'
-    }
-  }, function () {
-    if (!module.parent) {
-      server.start(function () {
-        console.log('Server started at port ' + server.info.port);
-      });
-    }
-  });
-});
 
 (async function start() {
   try {
