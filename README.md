@@ -2,10 +2,10 @@
 A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 with support for multiple strategies
 
-**Version 2.0.1 is compatible with Hapi 17. For previous version, stay with 1.x.x**
+**Version 2.1.0 is compatible with Hapi 17. For previous version, stay with 1.x.x**
 
 ## Current release
-2.0.1
+2.1.0
 
 ## Install
 
@@ -23,8 +23,7 @@ const routes = require('./routes/');
 const server = Hapi.Server({
   port,
 });
-const idpCert = '...';
-const decryptionCert = '...';
+
 const samlOptions = {
   // passport saml settings
   saml: {
@@ -34,16 +33,20 @@ const samlOptions = {
     host: 'localhost',
     protocol: 'http',
     entryPoint: 'https://my-idp.samlidp.io/saml2/idp/SSOService.php',
-    // Service Provider Private Key
-    decryptionPvk: fs.readFileSync(__dirname + '/private.key').toString(),
-    // IdP Public Key
-    cert: idpCert,
+    // Service Provider Private Signing Key
+    privateCert: fs.readFileSync(__dirname + '/privateSigning.pem', 'utf-8'),
+    // Service Provider Private Encryption Key
+    decryptionPvk: fs.readFileSync(__dirname + '/privateEncryption.pem', 'utf-8'),
+    // IdP Public Signing Key
+    cert: fs.readFileSync(__dirname + '/publicKey.crt', 'utf-8'),
     issuer: 'my-saml'
   },
   // hapi-passport-saml settings
   config: {
-    // Service Provider Public Key
-    decryptionCert,
+    // Service Provider Public Signing Key *Required if privateCert is provided
+    signingCert: fs.readFileSync(__dirname + '/publicKey.crt', 'utf-8'),
+    // Service Provider Public Encryption Key *Required if decryptionPvk is provided
+    decryptionCert: fs.readFileSync(__dirname + '/publicKey.crt', 'utf-8'),
     // Plugin Routes
     routes: {
       // SAML Metadata
@@ -76,7 +79,7 @@ const schemeOpts = {
   isSecure: false,
   isHttpOnly: false,
   ttl: 3600,
-}
+};
 
 (async function start() {
   try {

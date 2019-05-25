@@ -4,4 +4,5 @@ export interface SchemeConfig {
     isHttpOnly: boolean;
     ttl: number;
     cookie: string;
+    keepAlive: boolean;
 }

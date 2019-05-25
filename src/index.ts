@@ -36,7 +36,7 @@ const register = <RegisterFun>(
 
           hapiSaml
             .getSamlLib()
-            .getLogoutUrl(request, (err: any, url: string) => {
+            .getLogoutUrl(request, hapiSaml.props, (err: any, url: string) => {
               if (err !== null) {
                 return cb(err);
               }

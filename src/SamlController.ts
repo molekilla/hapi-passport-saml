@@ -9,7 +9,7 @@ import { Request } from 'hapi';
  * @param {Object} h - A Hapi response toolkit
  */
 exports.getMetadata = (saml: HapiSaml) => (request: Request, h: any) => {
-  const response = h.response(saml.getSamlLib().generateServiceProviderMetadata(saml.props.decryptionCert));
+  const response = h.response(saml.getSamlLib().generateServiceProviderMetadata(saml.props.decryptionCert, saml.props.signingCert));
   response.type('application/xml');
   return response;
 };

@@ -21,7 +21,7 @@ export class HapiSaml {
         }
         if (!options.config.routes.assert) {
             throw new Error('Missing options.config.routes.assert');
-        }                        
+        }
         if (!options.config && !options.config.assertHooks.onRequest) {
             throw new Error('Missing options.config.assertHooks.onRequest');
         }
@@ -31,6 +31,7 @@ export class HapiSaml {
         this.saml = new saml.SAML(options.saml);
         this.props = { ...options.saml };
         this.props.decryptionCert = options.config.decryptionCert;
+        this.props.signingCert = options.config.signingCert;
     }
 
     getSamlLib() {
