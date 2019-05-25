@@ -18,10 +18,11 @@ export const SchemeAuthenticate = (
           body: request.payload,
           query: request.query
         },
-      function(err: any, loginUrl: string) {
-        if(err) reject(err);
-        else resolve(loginUrl);
-      });
+        saml.props,
+        function(err: any, loginUrl: string) {
+          if(err) reject(err);
+          else resolve(loginUrl);
+        });
     });
     session = {};
     session.redirectTo = request.path;
@@ -31,6 +32,9 @@ export const SchemeAuthenticate = (
   }
 
   if (session && session[samlCredsPropKey]) {
+    if(settings.keepAlive) {
+      h.state(settings.cookie, session);
+    }
     return h.authenticated({
       credentials: session[samlCredsPropKey]
     });

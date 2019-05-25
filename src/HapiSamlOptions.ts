@@ -1,5 +1,6 @@
 export interface HapiSamlOptionConfig {
     decryptionCert: string;
+    signingCert: string;
     cookieSamlCredentialPropKey?: string | undefined | null;
     // cookieName?: string | undefined | null;
 
