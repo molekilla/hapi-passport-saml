@@ -73,11 +73,6 @@ const samlOptions = {
   }
 };
 
-const serverPlugins = [{
-  register: require('hapi-passport-saml'),
-  options: samlOptions,
-}];
-
 // Internal cookie settings
 const schemeOpts = {
   password: '14523695874159852035.0',
