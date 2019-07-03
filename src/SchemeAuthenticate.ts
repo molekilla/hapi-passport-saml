@@ -24,11 +24,10 @@ export const SchemeAuthenticate = (
           else resolve(loginUrl);
         });
     });
-    session = {};
-    session.redirectTo = request.path;
 
-    h.state(settings.cookie, session);
-    return h.redirect(loginUrl).takeover();
+    const idpLoginUrl = new URL(loginUrl.toString());
+    idpLoginUrl.search = `RelayState=${request.path}`;
+    return h.redirect(idpLoginUrl).takeover();
   }
 
   if (session && session[samlCredsPropKey]) {
