@@ -1,6 +1,6 @@
 {
   "name": "hapi-passport-saml",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP)",
   "main": "lib/index",
   "types": "lib/index",
