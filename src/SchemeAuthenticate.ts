@@ -26,7 +26,7 @@ export const SchemeAuthenticate = (
     });
 
     const idpLoginUrl = new URL(loginUrl.toString());
-    idpLoginUrl.search = `RelayState=${request.path}`;
+    idpLoginUrl.searchParams.set('RelayState', request.path);
     return h.redirect(idpLoginUrl).takeover();
   }
 
