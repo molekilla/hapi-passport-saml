@@ -5,7 +5,7 @@
         "target": "es6",
         "noImplicitAny": false,
         "moduleResolution": "node",
-        "sourceMap": false,
+        "sourceMap": true,
         "outDir": "lib",
         "baseUrl": ".",
         "paths": {
@@ -19,7 +19,6 @@
         "src/**/*"
     ],
     "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
+        "node_modules"
     ]
 }
