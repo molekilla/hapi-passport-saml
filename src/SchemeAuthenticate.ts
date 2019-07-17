@@ -12,11 +12,14 @@ export const SchemeAuthenticate = (
 
   if (!session) {
     const loginUrl = await new Promise((resolve, reject) => {
+      const query = request.query;
+      query.RelayState = request.path;
+
       saml.getSamlLib().getAuthorizeUrl(
         {
           headers: request.headers,
           body: request.payload,
-          query: request.query
+          query: query
         },
         saml.props,
         function(err: any, loginUrl: string) {
@@ -25,9 +28,7 @@ export const SchemeAuthenticate = (
         });
     });
 
-    const idpLoginUrl = new URL(loginUrl.toString());
-    idpLoginUrl.searchParams.set('RelayState', request.path);
-    return h.redirect(idpLoginUrl).takeover();
+    return h.redirect(loginUrl).takeover();
   }
 
   if (session && session[samlCredsPropKey]) {
