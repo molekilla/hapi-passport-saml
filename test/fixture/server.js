@@ -9,12 +9,14 @@ const server = Hapi.server({
 
 server.route({
     method: 'GET',
-    path: '/',
+    path: '/test',
     handler: function () {
 
         return 'Hello World!';
     }
 });
+
+exports.serever = server;
 
 exports.init = async () => {
 
