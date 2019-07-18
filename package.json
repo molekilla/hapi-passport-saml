@@ -1,12 +1,12 @@
 {
-  "name": "hapi-passport-saml",
+  "name": "hapi-corpsso",
   "version": "2.1.3",
-  "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP)",
+  "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP). This is a fork from hapi-passport-saml project (https://github.com/molekilla/hapi-passport-saml)",
   "main": "lib/index",
   "types": "lib/index",
   "scripts": {
     "start": "npm run build:live",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts",
+    "build:live": "nodemon --exec tsc -P tsconfig.json",
     "build": "tsc -P tsconfig.json",
     "pretest": "npm run build",
     "test": "lab"
@@ -19,31 +19,30 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/molekilla/hapi-passport-saml.git"
+    "url": "https://github.com/gdelpu/hapi-corpsso.git"
   },
   "keywords": [
     "saml",
     "sso",
     "hapi"
   ],
-  "author": "Rogelio Morrell",
+  "author": "Grégory DELPU <gregory.delpu@soprasteria.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/molekilla/hapi-passport-saml/issues"
+    "url": "https://github.com/gdelpu/hapi-corpsso/issues"
   },
-  "homepage": "https://github.com/molekilla/hapi-passport-saml#readme",
+  "homepage": "https://github.com/gdelpu/hapi-corpsso#readme",
   "dependencies": {
-    "@hapi/lab": "^19.1.0",
     "boom": "^7.3.0",
     "debug": "^2.2.0",
     "passport-saml": "^1.1.0"
   },
   "peerDependencies": {
-    "hapi": ">= 17.0.0"
+    "@hapi/hapi": "^18.3.1"
   },
   "devDependencies": {
     "@hapi/code": "^5.3.1",
-    "@hapi/hapi": "^18.3.1",
+    "@hapi/lab": "^19.1.0",
     "@types/hapi": "^15.0.2",
     "@types/node": "^10.14.10",
     "nodemon": "^1.19.1",

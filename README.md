@@ -1,15 +1,15 @@
-# hapi-passport-saml
+# hapi-corpsso
 A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
 with support for multiple strategies
 
 **Version 2.1.0 is compatible with Hapi 17. For previous version, stay with 1.x.x**
 
 ## Current release
-2.1.0
+2.1.3
 
 ## Install
 
-`npm install hapi-passport-saml`
+`npm install @aeroline_1025/hapi-corpsso`
 
 ## Configuration
 
@@ -17,7 +17,7 @@ Uses `samlidp.io` as IdP, read passport-saml for how to use options
 
 ```javascript
 const Hapi = require('hapi');
-const saml = require('hapi-passport-saml');
+const saml = require('@aeroline_1025/hapi-corpsso');
 const routes = require('./routes/');
 
 const server = Hapi.Server({
