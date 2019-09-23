@@ -37,4 +37,8 @@ export class HapiSaml {
     getSamlLib() {
         return this.saml;
     }
+
+    getSamlProps(){
+        return this.props;
+    }
 }

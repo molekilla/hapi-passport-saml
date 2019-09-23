@@ -1,4 +1,4 @@
-const Boom = require('boom');
+const Boom = require('@hapi/boom');
 import { HapiSaml } from './HapiSaml';
 import { Request } from 'hapi';
 
@@ -47,7 +47,7 @@ exports.assert = (
       if (onAssertRes) {
         // the callback shall return the reply object after using it to redirect/response.
         const replyFromCallback = onAssertRes(profile, request, h);
-        replyFromCallback.state(cookieName, {[samlCredsPropKey]: profile})
+        h.state(cookieName, {[samlCredsPropKey]: profile});
         return replyFromCallback;
       }
 

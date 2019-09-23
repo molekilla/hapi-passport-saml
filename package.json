@@ -1,6 +1,6 @@
 {
-  "name": "hapi-corpsso",
-  "version": "2.1.3",
+  "name": "@aeroline_1025/hapi-corpsso",
+  "version": "2.2.3",
   "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP). This is a fork from hapi-passport-saml project (https://github.com/molekilla/hapi-passport-saml)",
   "main": "lib/index",
   "types": "lib/index",
@@ -33,16 +33,14 @@
   },
   "homepage": "https://github.com/gdelpu/hapi-corpsso#readme",
   "dependencies": {
-    "boom": "^7.3.0",
+    "@hapi/boom": "^7.4.2",
     "debug": "^2.2.0",
     "passport-saml": "^1.1.0"
-  },
-  "peerDependencies": {
-    "@hapi/hapi": "^18.3.1"
   },
   "devDependencies": {
     "@hapi/code": "^5.3.1",
     "@hapi/lab": "^19.1.0",
+    "@hapi/hapi": "^18.3.1",
     "@types/hapi": "^15.0.2",
     "@types/node": "^10.14.10",
     "nodemon": "^1.19.1",
