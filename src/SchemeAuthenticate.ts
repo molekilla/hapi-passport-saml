@@ -13,7 +13,6 @@ export const SchemeAuthenticate = (
 
     if (!session) {
         if (saml.getSamlProps().authnRequestBinding === 'HTTP-POST') {
-            console.log('HTTP-POST');
             const loginForm = await new Promise((resolve, reject) => {
                 const query = request.query;
                 query.RelayState = request.path;
