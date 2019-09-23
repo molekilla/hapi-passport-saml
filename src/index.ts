@@ -4,7 +4,7 @@ import { HapiSaml } from './HapiSaml';
 import { SchemeImpl } from './SchemeImpl';
 import { Server } from 'hapi';
 
-const DEFAULT_COOKIE = `hapi-passport-saml-cookie`;
+const DEFAULT_COOKIE = `hapi-corpsso-cookie`;
 const SAML_CREDENTIALS_PROP = 'profile';
 const SCHEME_NAME = 'saml';
 interface RegisterFun extends Function {
@@ -13,6 +13,7 @@ interface RegisterFun extends Function {
     pkg: any;
   };
 }
+
 const register = <RegisterFun>(
   function(server: Server, options: HapiSamlOptions) {
     const hapiSaml = new HapiSaml(options);
@@ -82,4 +83,4 @@ const register = <RegisterFun>(
 exports.plugin = {
   register,
   pkg: require('../package.json')
-}
+};

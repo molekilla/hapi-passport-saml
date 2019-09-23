@@ -1,11 +1,11 @@
 # hapi-corpsso
 A Hapi plugin that wraps passport-saml for SAML SSO (as SP)
-with support for multiple strategies
+with support for multiple strategies. This is a fork from hapi-passport-saml project (https://github.com/molekilla/hapi-passport-saml)
 
-**Version 2.1.0 is compatible with Hapi 17. For previous version, stay with 1.x.x**
+**Version 2.x.X is compatible with Hapi 18. For previous version, stay with 1.x.x**
 
 ## Current release
-2.1.3
+2.2.0
 
 ## Install
 
@@ -30,8 +30,6 @@ const samlOptions = {
     callbackUrl: 'http://localhost/api/sso/v1/assert',
     logoutCallbackUrl: 'http://localhost/api/sso/v1/notifylogout',
     logoutUrl: 'https://my-idp.samlidp.io/saml2/idp/SingleLogoutService.php',
-    host: 'localhost',
-    protocol: 'http',
     entryPoint: 'https://my-idp.samlidp.io/saml2/idp/SSOService.php',
     // Service Provider Private Signing Key
     privateCert: fs.readFileSync(__dirname + '/privateSigning.pem', 'utf-8'),
@@ -87,8 +85,8 @@ const schemeOpts = {
       { plugin: saml, options: samlOptions },
     ]);
 
-    await server.auth.strategy('single-sign-on', 'saml', schemeOpts);
-    await server.auth.default('single-sign-on');
+    await server.auth.strategy('corpsso', 'saml', schemeOpts);
+    await server.auth.default('corpsso');
     await server.route(routes);
     await server.start();
     console.log(`Server listening on ${port}`);
@@ -99,11 +97,11 @@ const schemeOpts = {
 }());
 ```
 
->Note: Internal cookie name is `hapi-passport-saml-cookie`, if you need to read the SAML credentials for integration with other strategies, use assertion hook.
+>Note: Internal cookie name is `hapi-corpsso-cookie`, if you need to read the SAML credentials for integration with other strategies, use assertion hook.
 
 ## Multiple strategies
 
-Use `hapi-passport-saml` as the last strategy. Tested with `try` and `required` modes.
+Use `corpsso` as the last strategy. Tested with `try` and `required` modes.
 
 * `required`: If successful, returns credentials, else HTTP 200 with JSON
 * `try`: If successful, returns credentials, else empty credentials and isAuthenticated set to false
