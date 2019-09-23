@@ -1,6 +1,6 @@
 {
   "name": "@aeroline_1025/hapi-corpsso",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A Hapi plugin that wraps passport-saml for SAML SSO (as SP). This is a fork from hapi-passport-saml project (https://github.com/molekilla/hapi-passport-saml)",
   "main": "lib/index",
   "types": "lib/index",

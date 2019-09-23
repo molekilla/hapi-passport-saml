@@ -5,7 +5,7 @@ with support for multiple strategies. This is a fork from hapi-passport-saml pro
 **Version 2.x.X is compatible with Hapi 18. For previous version, stay with 1.x.x**
 
 ## Current release
-2.2.0
+2.2.1
 
 ## Install
 
